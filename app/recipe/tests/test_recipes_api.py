@@ -168,6 +168,20 @@ class PrivateRecipeApiTests(TestCase):
         self.assertIn(ingredient1, ingredients)
         self.assertIn(ingredient2, ingredients)
 
+    def test_create_recipe_with_instructions(self):
+        """Test creating a recipe with instructions"""
+        payload = {
+            'title': 'Thai prawn red curry',
+            'time_minutes': 30,
+            'price': 9.00,
+            'instructions': 'Instructions\r\nmulti\r\nline'
+        }
+        res = self.client.post(RECIPES_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        recipe = Recipe.objects.get(id=res.data['id'])
+        self.assertEqual(recipe.instructions, payload['instructions'])
+
     def test_partial_update_recipe(self):
         """Test updating a recipe with patch"""
         recipe = sample_recipe(user=self.user)
